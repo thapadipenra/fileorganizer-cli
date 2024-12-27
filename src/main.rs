@@ -1,55 +1,21 @@
 use regex::Regex;
+use serde::Deserialize;
 use std::collections::HashMap;
 use std::env;
 use std::fs;
+use std::fs::File;
 use std::io;
 use std::path::Path;
 
+#[derive(Debug, Deserialize)]
+struct Config {
+    categories: HashMap<String, Vec<String>>,
+}
+
 fn main() -> io::Result<()> {
-    // Define categories and their regex patterns
-    let mut categories: HashMap<&str, Vec<&str>> = HashMap::new();
-    categories.insert(
-        "Foundation of Science",
-        vec![
-            r"science",
-            r"python",
-            r"physics",
-            r"chemistry",
-            r"biology",
-            r"pytorch",
-        ],
-    );
-    categories.insert("Mathematics and Statistics", vec![r"math", r"statistics"]);
-    categories.insert(
-        "Foundation of Informatics",
-        vec![r"informatics", r"computerscience", r"computer"],
-    );
-    categories.insert(
-        "Business Administration and Accounting",
-        vec![
-            r"business",
-            r"accounting",
-            r"rust",
-            r"finance",
-            r"economics",
-            r"cli",
-            r"commands",
-            r"linux",
-        ],
-    );
-    categories.insert("German Language", vec![r"german", r"deutsch"]);
-    categories.insert(
-        "Foundation of Medicine",
-        vec![
-            r"medicine",
-            r"health",
-            r"doctor",
-            r"hospital",
-            r"medical",
-            r"terminology",
-            r"anatomy",
-        ],
-    );
+    // Read the configuration file
+    let file = File::open("config.yaml").expect("Unable to open config file");
+    let config: Config = serde_yaml::from_reader(file).expect("Unable to parse config file");
 
     // Get the directory path
     let dir_path = env::args().nth(1).expect("Please provide a directory path");
@@ -62,7 +28,7 @@ fn main() -> io::Result<()> {
         let file_name_str = file_name.to_str().unwrap().to_lowercase();
 
         // Match file name to categories
-        for (category, patterns) in &categories {
+        for (category, patterns) in &config.categories {
             for pattern in patterns {
                 let re = Regex::new(pattern).unwrap();
                 if re.is_match(&file_name_str) {
