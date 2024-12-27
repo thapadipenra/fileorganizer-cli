@@ -3,72 +3,68 @@ name: Build and Release
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - "v*.*.*"
 
 jobs:
   build:
     runs-on: ubuntu-22.04
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Rust
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-        profile: minimal
-        override: true
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
 
-    - name: Build
-      run: cargo build --release
+      - name: Build
+        run: cargo build --release
 
-    - name: List Files (Debug)
-      run: ls -R target/release
+      - name: List Files (Debug)
+        run: ls -R target/release
 
-    - name: Upload Release Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: fileorganizer-cli
-        path: target/release/fileorganizer-cli
+      - name: Upload Release Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fileorganizer-cli
+          path: target/release/fileorganizer-cli
 
   release:
     needs: build
     runs-on: ubuntu-22.04
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: List Artifacts (Debug)
-      run: echo "Artifacts available: ${{ steps.download_artifact.outputs.artifacts }}"
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: fileorganizer-cli
 
-    - name: Download Build Artifact
-      uses: actions/download-artifact@v3
-      with:
-        name: fileorganizer-cli
+      - name: List Downloaded Files (Debug)
+        run: ls -R fileorganizer-cli
 
-    - name: List Downloaded Files (Debug)
-      run: ls -R fileorganizer-cli
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
 
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        draft: false
-        prerelease: false
-
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: fileorganizer-cli/fileorganizer-cli
-        asset_name: fileorganizer-cli
-        asset_content_type: application/octet-stream
-  
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: fileorganizer-cli/fileorganizer-cli
+          asset_name: fileorganizer-cli
+          asset_content_type: application/octet-stream
