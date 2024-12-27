@@ -1,0 +1,35 @@
+categories:
+  Foundation of Science:
+    - science
+    - python
+    - physics
+    - chemistry
+    - biology
+    - pytorch
+  Mathematics and Statistics:
+    - math
+    - statistics
+  Foundation of Informatics:
+    - informatics
+    - computerscience
+    - computer
+  Business Administration and Accounting:
+    - business
+    - accounting
+    - rust
+    - finance
+    - economics
+    - cli
+    - commands
+    - linux
+  German Language:
+    - german
+    - deutsch
+  Foundation of Medicine:
+    - medicine
+    - health
+    - doctor
+    - hospital
+    - medical
+    - terminology
+    - anatomy
