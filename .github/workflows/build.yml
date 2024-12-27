@@ -71,3 +71,4 @@ jobs:
         asset_path: fileorganizer-cli/fileorganizer-cli
         asset_name: fileorganizer-cli
         asset_content_type: application/octet-stream
+  
