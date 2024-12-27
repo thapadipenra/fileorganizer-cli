@@ -23,7 +23,7 @@ jobs:
       - name: Build
         run: cargo build --release
 
-      - name: Upload Release Asset
+      - name: Upload Release Artifact
         uses: actions/upload-artifact@v4
         with:
           name: fileorganizer-cli
