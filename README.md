@@ -1,4 +1,4 @@
-# fileorganizer-cli
+# [fileorganizer-cli]
 
 * this tool help you organize file into different folders if you got some messy files inside your folder and want to organize it
   
@@ -9,4 +9,4 @@
 
 cargo run -- ~/Downloads/subjects_notes
 
-[website](https://thapadipenra.github.io/fileorganizer-web)
+# [more info](https://thapadipenra.github.io/fileorganizer-web)
