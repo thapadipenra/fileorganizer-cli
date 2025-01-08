@@ -9,4 +9,4 @@
 
 cargo run -- ~/Downloads/subjects_notes
 
-https://thapadipenra.github.io/fileorganizer-web
+[website](https://thapadipenra.github.io/fileorganizer-web)
