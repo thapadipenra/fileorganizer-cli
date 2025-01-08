@@ -8,3 +8,5 @@
 
 
 cargo run -- ~/Downloads/subjects_notes
+
+https://thapadipenra.github.io/fileorganizer-web
