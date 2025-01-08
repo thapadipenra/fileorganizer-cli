@@ -1,4 +1,4 @@
-# [fileorganizer-cli]
+# [fileorganizer-cli](https://thapadipenra.github.io/fileorganizer-web)
 
 * this tool help you organize file into different folders if you got some messy files inside your folder and want to organize it
   
