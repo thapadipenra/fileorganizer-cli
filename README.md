@@ -9,4 +9,8 @@
 
 cargo run -- ~/Downloads/subjects_notes
 
+OR
+
+fileorganizer-cli ~/Downloads/subjects_notes (by downloading binary file "fileorganizer-cli")
+
 # [more info](https://thapadipenra.github.io/fileorganizer-web)
