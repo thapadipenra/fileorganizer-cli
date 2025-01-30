@@ -72,10 +72,10 @@ jobs:
     strategy:
       matrix:
         target:
-          - x86_64-unknown-linux-musl # Linux (x86_64, musl)
-          - aarch64-unknown-linux-musl # Linux (ARM64, musl)
-          - aarch64-apple-darwin # macOS (M1/M2)
-          - x86_64-pc-windows-msvc # Windows (MSVC)
+          - x86_64-unknown-linux-musl # Linux (musl)
+          - aarch64-unknown-linux-musl # ARM Linux (musl)
+          - x86_64-apple-darwin # macOS (Intel)
+          - aarch64-pc-windows-msvc # Windows (ARM)
 
     env:
       BINARY_NAME: fileorganizer-cli
@@ -96,23 +96,26 @@ jobs:
       - name: Build with Cross
         run: cross build --target ${{ matrix.target }} --release --verbose
 
-      - name: Package Release Binaries
+      - name: Create Release Archive
         run: |
-          mkdir -p release/${{ matrix.target }}
+          mkdir -p release
 
-          if [[ "${{ matrix.target }}" == "x86_64-pc-windows-msvc" ]]; then
-            cp target/${{ matrix.target }}/release/$BINARY_NAME.exe release/${{ matrix.target }}/
-            zip -r release/${{ matrix.target }}.zip release/${{ matrix.target }}
+          if [[ "${{ matrix.target }}" == *"windows"* ]]; then
+            cp target/${{ matrix.target }}/release/$BINARY_NAME.exe release/
+            zip -r ${{ matrix.target }}.zip release
+          elif [[ "${{ matrix.target }}" == *"darwin"* ]]; then
+            cp target/${{ matrix.target }}/release/$BINARY_NAME release/
+            tar -czvf ${{ matrix.target }}.tar.gz -C release $BINARY_NAME
           else
-            cp target/${{ matrix.target }}/release/$BINARY_NAME release/${{ matrix.target }}/
-            tar -czvf release/${{ matrix.target }}.tar.gz -C release/${{ matrix.target }} .
+            cp target/${{ matrix.target }}/release/$BINARY_NAME release/
+            tar -czvf ${{ matrix.target }}.tar.gz -C release $BINARY_NAME
           fi
 
-      - name: Upload All Binaries in One Release
+      - name: Upload Release Assets
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            release/*.tar.gz
-            release/*.zip
+            *.tar.gz
+            *.zip
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_BINARY_TOKEN }}
