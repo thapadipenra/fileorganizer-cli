@@ -14,8 +14,6 @@ jobs:
         target:
           - x86_64-unknown-linux-musl # Linux (musl)
           - aarch64-unknown-linux-musl # ARM Linux (musl)
-          - x86_64-apple-darwin # macOS (Intel)
-          - aarch64-apple-darwin # macOS (Apple Silicon)
 
     env:
       BINARY_NAME: fileorganizer-cli
@@ -27,32 +25,28 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Install Cross (Linux targets only)
-        if: contains(matrix.target, 'linux')
+      - name: Install Cross
         run: cargo install cross
 
-      - name: Install Target for Compilation
+      - name: Install Target for Cross Compilation
         run: rustup target add ${{ matrix.target }}
 
-      - name: Build Binary
-        run: |
-          if [[ "${{ matrix.target }}" == *"linux"* ]]; then
-            cross build --target ${{ matrix.target }} --release --verbose
-          else
-            cargo build --target ${{ matrix.target }} --release --verbose
-          fi
+      - name: Build with Cross
+        run: cross build --target ${{ matrix.target }} --release --verbose
 
       - name: Create Release Archive
         run: |
           mkdir -p release
-          BIN_PATH="target/${{ matrix.target }}/release/$BINARY_NAME"
 
           if [[ "${{ matrix.target }}" == *"windows"* ]]; then
-            cp "$BIN_PATH.exe" release/
-            zip -r "${{ matrix.target }}.zip" release/*
+            cp target/${{ matrix.target }}/release/$BINARY_NAME.exe release/
+            zip -r ${{ matrix.target }}.zip release
+          elif [[ "${{ matrix.target }}" == *"darwin"* ]]; then
+            cp target/${{ matrix.target }}/release/$BINARY_NAME release/
+            tar -czvf ${{ matrix.target }}.tar.gz -C release $BINARY_NAME
           else
-            cp "$BIN_PATH" release/
-            tar -czvf "${{ matrix.target }}.tar.gz" -C release $BINARY_NAME
+            cp target/${{ matrix.target }}/release/$BINARY_NAME release/
+            tar -czvf ${{ matrix.target }}.tar.gz -C release $BINARY_NAME
           fi
 
       - name: Upload Release Assets
